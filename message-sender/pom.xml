@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
 
-    <groupId>pro.entera</groupId>
+    <groupId>ru.otus.pw</groupId>
     <artifactId>message-sender</artifactId>
-    <version>1.3.0.EN-4619-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>message-sender</name>
 
     <properties>

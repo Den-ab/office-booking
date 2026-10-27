@@ -38,5 +38,5 @@ spring:
 application:
   emailTemplatesPath: ${EMAIL_TEMPLATES_PATH:email/}
   emailSenderAddress: ${EMAIL_SENDER_ADDRESS:someRuUserName@yandex.ru}
-  enteraLogoPath: ${ENTERA_LOGO_PATH:images/logo.png}
+  logoPath: ${LOGO_PATH:images/logo.png}
   locale: ${LOCALE:ru-RU}

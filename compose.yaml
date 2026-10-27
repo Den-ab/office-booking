@@ -1,0 +1,84 @@
+# Local demo stack: `docker compose up --build`
+# - booking-service  http://localhost:9010
+# - Mailpit (inbox)  http://localhost:8025
+# - RabbitMQ UI      http://localhost:15672 (guest / guest)
+services:
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: office-booking-db
+    environment:
+      POSTGRES_DB: office_booking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d office_booking"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: office-booking-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: office-booking-mailpit
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  message-sender:
+    build: ./message-sender
+    container_name: office-booking-message-sender
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_USERNAME: demo
+      MAIL_PASSWORD: demo
+      EMAIL_SENDER_ADDRESS: no-reply@example.com
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  booking-service:
+    build: ./booking-service
+    container_name: office-booking-service
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/office_booking?characterEncoding=UTF8
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+      JWT_SECRET: demo-secret-change-me-0123456789abcdef0123456789
+      EMAIL_SENDER: no-reply@example.com
+    ports:
+      - "9010:9010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  pg_data:

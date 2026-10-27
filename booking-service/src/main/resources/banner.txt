@@ -1,0 +1,3 @@
+${AnsiColor.GREEN}
+  Office Booking :: ${spring.application.name}
+${AnsiColor.DEFAULT}
