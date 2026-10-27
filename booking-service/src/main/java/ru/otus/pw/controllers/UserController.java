@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.pw.controllers.request_dtos.LoginDTO;
 import ru.otus.pw.controllers.response_dtos.AuthResponse;
 import ru.otus.pw.controllers.response_dtos.UserResponseDTO;
-import ru.otus.pw.models.AppUser;
 import ru.otus.pw.services.AppUserDetailsService;
 import ru.otus.pw.services.JwtService;
 import ru.otus.pw.services.UserService;

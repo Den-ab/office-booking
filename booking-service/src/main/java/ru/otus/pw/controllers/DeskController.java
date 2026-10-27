@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.pw.controllers.request_dtos.DeskDTO;
 import ru.otus.pw.controllers.response_dtos.DeskResponseDTO;
-import ru.otus.pw.models.Desk;
 import ru.otus.pw.services.DeskService;
 
 import java.util.List;
