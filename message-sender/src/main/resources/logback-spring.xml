@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="application.home" value="."/>
-    <include resource="logging/properties.xml"/>
+    <include optional="true" resource="logging/properties.xml"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${application.home}/logs/application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -25,10 +25,10 @@
         <appender-ref ref="STDOUT"/>
     </appender>
     <logger name="application" level="DEBUG"/>
-    <include resource="logging/sql.xml"/>
+    <include optional="true" resource="logging/sql.xml"/>
     <root level="INFO">
         <appender-ref ref="ASYNCFILE"/>
-        <if condition='p("console.log.enabled").equals("true")'>
+        <if condition='!p("console.log.enabled").equals("false")'>
             <then>
                 <appender-ref ref="ASYNCSTDOUT"/>
             </then>

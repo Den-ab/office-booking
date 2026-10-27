@@ -1,8 +1,12 @@
-FROM bellsoft/liberica-openjdk-alpine:17
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /build
+COPY pom.xml .
+RUN mvn -B -q dependency:go-offline
+COPY src ./src
+RUN mvn -B -q package -DskipTests
 
-# Копируем собранный JAR-файл из стадии сборки
-COPY ./target/message-sender-*.jar /app/message-sender.jar
-
-
-# Запуск приложения (запуск сконфигурировать в docker-compose с различными параметрами запуска.)
-ENTRYPOINT ["sh", "-c", "java -jar /app/message-sender.jar"]
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /build/target/message-sender-*.jar app.jar
+EXPOSE 9011
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
