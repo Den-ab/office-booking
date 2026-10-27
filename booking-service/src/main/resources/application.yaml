@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT:9010} # Порт сервера
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+spring:
+  application:
+    name: booking-service
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://pg:5432/office_booking?characterEncoding=UTF8}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    schemas: public
+    locations: classpath:db/migration
+security:
+  jwt:
+    expiration: ${JWT_EXPIRATION:86400000}
+    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+logging:
+  level:
+    org.flywaydb: debug
+app:
+  mail:
+    email-sender: ${EMAIL_SENDER:no-reply@example.com}
+  messaging:
+    message-sender:
+      exchange:
+        name: "x.message-sender"
+      routing-key: "process"
+      queue:
+        name: "q.message-sender.process"
