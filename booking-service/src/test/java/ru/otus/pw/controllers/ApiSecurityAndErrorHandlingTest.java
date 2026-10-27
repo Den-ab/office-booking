@@ -2,6 +2,8 @@ package ru.otus.pw.controllers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -23,6 +25,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,6 +79,24 @@ class ApiSecurityAndErrorHandlingTest {
     void userCannotCreateArea() throws Exception {
         mockMvc.perform(post("/areas").contentType(MediaType.APPLICATION_JSON).content(AREA_JSON))
             .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/areas/", "/desks/", "/bookings/"})
+    @WithMockUser(roles = "USER")
+    @DisplayName("A regular user cannot delete areas, desks or bookings")
+    void userCannotDelete(String path) throws Exception {
+        mockMvc.perform(delete(path + UUID.randomUUID()))
+            .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/areas/", "/desks/", "/bookings/"})
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("An admin can delete areas, desks and bookings")
+    void adminCanDelete(String path) throws Exception {
+        mockMvc.perform(delete(path + UUID.randomUUID()))
+            .andExpect(status().isOk());
     }
 
     @Test
